@@ -11,3 +11,7 @@ Resources:
       MemorySize: 128
       Timeout: 15
       Role: 'arn:aws:iam::716747170751:role/DYWeddingMsgHandlerRole'
+      Environment:
+        Variables:
+          setting: ./setting.json
+

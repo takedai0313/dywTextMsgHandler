@@ -1,5 +1,13 @@
 'use strict';
 
+const fs = require("fs");
+const invokeLambda = (JSON.parse(fs.readFileSync(process.env.setting, 'utf8'))).invokeLambda;
+const AWS = require("aws-sdk");
+const lambda = new AWS.Lambda({
+    apiVersion: '2015-03-31',
+    region: 'ap-northeast-1'
+});
+
 exports.handler = (event, context, callback) => {
     console.log(event);
     let replyMsg;
@@ -20,9 +28,25 @@ exports.handler = (event, context, callback) => {
             break;
     }
     
+    const param = {
+        replyToken: event.events[0].replyToken,
+        msg: replyMsg
+    };
+    
+    // Line返答を行うlambdaを呼び出す
+    const invokeparam = {
+        FunctionName: invokeLambda,
+        InvocationType: "Event",
+        Payload: new Buffer(JSON.stringify(param)).toString()
+    };
+    lambda.invoke(invokeparam, (err, data) => {
+        if(err)   console.log(err, err.stack);
+        else      console.log(data);
+    });
+    
     console.log(replyMsg);
     // TODO implement
-    callback();
+    callback(null);
 };
 
 /*
