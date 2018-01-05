@@ -2,6 +2,7 @@
 
 const fs = require("fs");
 const invokeLambda = (JSON.parse(fs.readFileSync(process.env.setting, 'utf8'))).invokeLambda;
+const replyMessages = (JSON.parse(fs.readFileSync(process.env.setting, 'utf8'))).reply;
 const AWS = require("aws-sdk");
 const lambda = new AWS.Lambda({
     apiVersion: '2015-03-31',
@@ -15,16 +16,16 @@ exports.handler = (event, context, callback) => {
     
     switch(true){
         case /おめで/.test(msg):
-            replyMsg = "ありがとう！当日皆様が楽しめるように頑張ります！";
+            replyMsg = replyMessages[1];
             break;
         case /日にち/.test(msg):
-            replyMsg = "式の日にちかな？2018年の6月9日にやります！";
+            replyMsg = replyMessages[2];
             break;
         case /時間/.test(msg):
-            replyMsg = "式は16時、披露宴は18時半から予定です";
+            replyMsg = replyMessages[3];
             break;
         default:
-            replyMsg = "ごめんね、簡単な質問にしか答えられないよ";
+            replyMsg = replyMessages[0];
             break;
     }
     
